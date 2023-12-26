@@ -14,19 +14,8 @@ const EventList = () => {
   const [type, setType] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const typeList = new Set(data?.events.map((event) => event.type));
-  const filteredEvents = (
-    (!type
-      ? data?.events
-      : data?.events) || []
-  ).filter((event, index) => {
-    if (
-      (currentPage - 1) * PER_PAGE <= index &&
-      PER_PAGE * currentPage > index
-    ) {
-      return true;
-    }
-    return false;
-  });
+  const filteredEvents = data?.events.filter(event => !type || event.type === type).slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE ) || [];
+
 
   const changeType = (evtType) => {
     console.log("Selected type:", evtType); // Ajoutez cette ligne
@@ -37,18 +26,19 @@ const EventList = () => {
 
   
 
- useEffect(() => {
+  useEffect(() => {
+    const start = (currentPage - 1) * PER_PAGE;
+    const end = start + PER_PAGE;
   
-  const start = (currentPage - 1) * PER_PAGE;
-  const end = start + PER_PAGE;
+    console.log("Start:", start, "End:", end);
+    console.log("Number of filtered events:", filteredEvents.length);
   
-  console.log("Start:", start, "End:", end);
-  console.log("Number of filtered events:", filteredEvents.length);
-
-}, [currentPage, data, type]);
+  }, [currentPage, data, type, filteredEvents]);
+  
 
   const pageNumber = Math.floor((filteredEvents?.length || 0) / PER_PAGE) + 1;
-  console.log("bla",typeList)                                                                //     
+  console.log("bla",typeList)  
+                                                                //     
   return (
     <>
     
@@ -60,7 +50,7 @@ const EventList = () => {
           <h3 className="SelectTitle">Catégories</h3>
           <Select
             selection={Array.from(typeList)}
-            onChange={(value) => changeType(value, useEffect )}
+            onChange={(value) => changeType(value, filteredEvents )}
           />
           <div id="events" className="ListContainer">
             {filteredEvents.map((event) => (
