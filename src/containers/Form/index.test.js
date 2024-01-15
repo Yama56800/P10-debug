@@ -18,7 +18,7 @@ describe("When Form is created", () => {
       fireEvent.click(await screen.findByTestId("button-test-id"));
 
       await waitFor(() => {
-        expect(screen.getByText(/En cours/)).toBeInTheDocument();
+        expect(screen.getByText("En cours")).toBeInTheDocument();
       });
 
       

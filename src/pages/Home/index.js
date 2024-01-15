@@ -13,7 +13,17 @@ import Modal from "../../containers/Modal";
 import { useData } from "../../contexts/DataContext";
 
 const Page = () => {
-  const {last} = useData()
+  const { data } = useData();
+  const latestEvent = data?.events?.reduce((acc, event) => {
+    if (!event.date) return acc;
+    const currentDate = new Date(event.date);
+    const lastDate = acc ? new Date(acc.date) : null;
+    return !lastDate || currentDate > lastDate ? event : acc;
+  }, null);
+  const latestEventImageSrc = latestEvent?.cover || "/default-cover.jpg";
+  const latestEventTitle = latestEvent?.title || "Default Title";
+  const latestEventDate = new Date(latestEvent?.date || new Date());
+
   return <>
     <header>
       <Menu />
@@ -108,6 +118,7 @@ const Page = () => {
             <Form
               onSuccess={() => setIsOpened(true)}
               onError={() => null}
+              
             />
           )}
         </Modal>
@@ -117,11 +128,10 @@ const Page = () => {
       <div className="col presta">
         <h3>Notre derniére prestation</h3>
         <EventCard
-          imageSrc={last?.cover || "/default-cover.jpg"}
-          title={last?.title || "Default Title"}
-          date={new Date(last?.date || new Date())}
-          small
-          label="boom"
+            imageSrc={latestEventImageSrc}
+            title={latestEventTitle}
+            date={latestEventDate} 
+            label="boom"
           />
       </div>
       <div className="col contact">
